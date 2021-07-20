@@ -1,0 +1,85 @@
+#%RAML 1.0
+title: poc4
+traits:
+  client-id-required:
+    headers:
+      client_id:
+        type: string
+        required: true
+      client_secret:
+        type: string
+        required: true
+    responses:
+      401:
+        description: Unauthorized
+      500:
+        description: Bad response from the authorized server  
+                  
+/poc4/{id}:
+  is:
+    - client-id-required
+  get:
+    description: fetching the data from the 
+    queryParameters:
+      skill:
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include response/getresp.json
+            
+  post:
+    description: Inserting the data into the database
+    body:
+      application/json:
+        example: !include request/postreq.json
+        type: !include datatypes/post-dataType.raml
+          
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include response/postresp.json
+              
+  put:
+    description: updating the data into the database
+    body:
+      application/json:
+        example: !include request/putreq.json
+        type: !include datatypes/put-dataType.raml
+          
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include response/putresp.json
+             
+  delete:
+    description: deleting the data into the database
+    body:
+      application/json:
+        example: !include request/deletereq.json
+        type: !include datatypes/delete-dataType.raml
+         
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include response/deleteresp.json
+             
+              
+          
+                  
+          
+                              
+              
+          
+                  
+          
+                              
+            
+          
+                  
+          
+                              

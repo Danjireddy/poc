@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="gobal-impFlow-get" doc:id="20bcd3e4-415d-48d2-98d0-24f7849ab825" >
+		<db:select doc:name="Select" doc:id="b381c261-352e-446f-9867-2ae3eb83ad03" config-ref="Database_Config-global">
+			<db:sql ><![CDATA[select * from mulesoft.new_table;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="80aca8e8-39d0-443a-8266-3363f36d269e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0a9772bc-a7e6-436e-91d2-3641416bf6fa" message="Sucessfully fetching the data::::::;;; #[payload]" />
+	</flow>
+	<sub-flow name="gobal-impSub_Flow-Insert" doc:id="1f577485-9e77-4d7b-9e75-9beba59460b0" >
+		<db:insert doc:name="Insert" doc:id="f92b4d41-cd5f-4826-ae2f-cbbd96d4067c" config-ref="Database_Config-global">
+			<db:sql ><![CDATA[insert into mulesoft.new_table ( eid, ename, eskill ) values ( :eid, :ename, :eskill)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+eid:payload.employeeid,
+ename:payload.employeename,
+eskill:payload.employeeskill
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="d209c715-0753-4627-9304-349c7c070ef6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="64c671a8-04c5-42b9-b78b-8f862c9de7b2" message="Inserting the data::::::::::::; #[payload]" />
+	</sub-flow>
+	<sub-flow name="gobal-impSub_Flow-delete" doc:id="06d94947-41d0-49ac-8e49-b8a8ad459b01" >
+		<db:delete doc:name="Delete" doc:id="71948a76-c3ce-4f2d-914c-719657eb6c2f" config-ref="Database_Config-global">
+			<db:sql ><![CDATA[delete from mulesoft.new_table where eid=:eid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+eid:payload.id
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="db0eb95e-bb54-481d-b67e-1ca94a27bb6c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="69ca7e4e-1b74-4019-bf60-9dadab41dee3" message="sucessfully deleting the data ::::::::::; #[payload]" />
+	</sub-flow>
+	<sub-flow name="gobal-impSub_Flow-update" doc:id="541dde56-c67f-484a-94c8-7de23ae855e4" >
+		<db:update doc:name="Update" doc:id="53308e4d-de75-48bd-a185-c710b73ac845" config-ref="Database_Config-global">
+			<db:sql ><![CDATA[update mulesoft.new_table set ename = :ename where eid = :eid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+eid:payload.id,
+ename:payload.name
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="23fcbf14-9d7e-47a9-8ee7-6d62bbf05214" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="73274632-39c6-48ff-9c03-b4336831aa3b" message="sucessfully updating the data ::::::::::::: #[payload]" />
+	</sub-flow>
+</mule>
